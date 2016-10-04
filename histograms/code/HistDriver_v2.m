@@ -1,12 +1,30 @@
 function [respondersStruct,nonRespondersStruct]=HistDriver_v2
 close all hidden
-%load structures with all patient data
 
+%PICK WHICH SCRIPTS TO RUN BY SETTING IT EQUAL TO 1
+Individual_Histograms=0;
+Histograms_Per_Image_Type=0;
+Overlay_Per_Image_Type=1;
+
+%load structures with all patient data
 load('../../../nonRespondersStruct.mat')
 load('../../../respondersStruct.mat')
 
 % Create Histograms for Individual Patients
-HistPerPatient(respondersStruct);
-HistPerPatient(nonRespondersStruct);
+if Individual_Histograms==1
+    HistPerPatient(respondersStruct);
+    HistPerPatient(nonRespondersStruct);
+end
+
+%Create cumulative Histograms for each type of image (Art, Del, etc.)
+if Histograms_Per_Image_Type==1
+    HistPerImageType(respondersStruct,nonRespondersStruct);
+end
+
+%Overlay histograms for each patient for each type of image (Art, Del,
+%etc.)
+if Overlay_Per_Image_Type==1
+   OverlayPerImageType(respondersStruct,nonRespondersStruct)
+end
 end
 
