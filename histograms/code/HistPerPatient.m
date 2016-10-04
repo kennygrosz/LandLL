@@ -8,7 +8,8 @@ type={'Art','Pre','Del','Ven','Del-Art'};
 for i = 1:length(FieldNames) %for each patient
     figure
     for j = 1:4 %for each type of image
-        %       plot histogram
+        %       plot histogram 
+        %new comment
         subplot(2,2,j);
         gcf=histogram(Struct(j).(FieldNames{i}).Scans.img) ;
         title(strcat(FieldNames{i},', ',type{j}));axis([-1100, 1000, 0, 2e6]);
