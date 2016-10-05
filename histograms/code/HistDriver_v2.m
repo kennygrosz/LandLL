@@ -1,4 +1,4 @@
-function [respondersStruct,nonRespondersStruct]=HistDriver_v2
+function HistDriver_v2
 close all hidden
 
 %PICK WHICH SCRIPTS TO RUN BY SETTING IT EQUAL TO 1
@@ -24,7 +24,7 @@ end
 %Overlay histograms for each patient for each type of image (Art, Del,
 %etc.)
 if Overlay_Per_Image_Type==1
-   OverlayPerImageType(respondersStruct,nonRespondersStruct)
+   OverlayPerImageType(respondersStruct,nonRespondersStruct);
 end
 end
 

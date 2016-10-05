@@ -8,67 +8,30 @@ function OverlayPerImageType(Struct1,Struct2)
 FN1=fieldnames(Struct1);
 FN2=fieldnames(Struct2);
 type={'Art','Pre','Del','Ven','Del-Art'};
+bin=[];
+freq=[];
 
 for j=1:4 %for each type of picture
     figure; hold on;axis([-1100, 1000, 0, 2e6]);
     title({'Overlain Patient Histograms, ',type{j}})
     xlabel('Hounsfield Units (HU)');ylabel('Freq');
-
+    plot([0 1],[0 1],'r');plot([0 1],[0 1],'b');legend('Responders','Non-Responders');
+    for i=1:length(FN2) %for each patient in Structure 1, plot their histogram
+        [freq(i+length(FN1),:),bin(i+length(FN1),:)]=histcounts(Struct2(j).(FN2{i}).Scans.img(Struct2(j).(FN2{i}).Scans.img>-1100),500);
+        plot(bin(i+length(FN1),1:end-1),freq(i+length(FN1),:),'b')
+    end 
     for i=1:length(FN1) %for each patient in Structure 1, plot their histogram
-        temp=histogram(Struct(j).(FN1{i}).Scans.img);
-        
+        [freq(i,:),bin(i,:)]=histcounts(Struct1(j).(FN1{i}).Scans.img(Struct1(j).(FN1{i}).Scans.img>-1100),500);
+        plot(bin(i,1:end-1),freq(i,:),'r')
     end
+    
+    %save figures and histogram values
+    saveas(gcf,strcat('../results/overlay_histograms/figures/',type{j},'_overlay_hist.jpg'));
+
+    %save CSV of histogram values to be passed onto 
+    csvwrite(strcat('../results/overlay_histograms/CSV/',type{j},'_overlay_hist_freq.csv'),[freq]);
+    csvwrite(strcat('../results/overlay_histograms/CSV/',type{j},'_overlay_hist_bins.csv'),[bin]);
+
 end
-
-
-
-
-%STRUCTURE 1
-for i=1:length(FN1) %for each patient in Structure 1
-    Art=[Art;reshape(Struct1(1).(FN1{i}).Scans.img,[],1)];
-    Pre=[Pre;reshape(Struct1(2).(FN1{i}).Scans.img,[],1)];
-    Del=[Del;reshape(Struct1(3).(FN1{i}).Scans.img,[],1)];
-    Ven=[Ven;reshape(Struct1(4).(FN1{i}).Scans.img,[],1)];
+   
 end
-%STRUCTURE 2
-for i=1:length(FN2) %for each patient in Structure 2
-    Art=[Art;reshape(Struct2(1).(FN2{i}).Scans.img,[],1)];
-    Pre=[Pre;reshape(Struct2(2).(FN2{i}).Scans.img,[],1)];
-    Del=[Del;reshape(Struct2(3).(FN2{i}).Scans.img,[],1)];
-    Ven=[Ven;reshape(Struct2(4).(FN2{i}).Scans.img,[],1)];
-end
-
-
-%crate figures and save images as well as CSV files
-
-%ART
-figure
-gcf=histogram(Art); 
-title('Art Cumulative Histogram');axis([-1100, 1000, 0, 2e7]);
-xlabel('HU');ylabel('Freq');
-saveas(gcf,strcat('../results/cumulative_histograms/figures/','Art_hist.jpg'));
-csvwrite(strcat('../results/cumulative_histograms/CSV/','Art_hist.csv'),[gcf.BinEdges(1:end-1), gcf.Values]);
-
-%PRE
-figure
-gcf=histogram(Pre); 
-title('Pre Cumulative Histogram');axis([-1100, 1000, 0, 2e7]);
-xlabel('HU');ylabel('Freq');
-saveas(gcf,strcat('../results/cumulative_histograms/figures/','Pre_hist.jpg'));
-csvwrite(strcat('../results/cumulative_histograms/CSV/','Pre_hist.csv'),[gcf.BinEdges(1:end-1), gcf.Values]);
-
-%DEL
-figure
-gcf=histogram(Del); 
-title('Del Cumulative Histogram');axis([-1100, 1000, 0, 2e7]);
-xlabel('HU');ylabel('Freq');
-saveas(gcf,strcat('../results/cumulative_histograms/figures/','Del_hist.jpg'));
-csvwrite(strcat('../results/cumulative_histograms/CSV/','Del_hist.csv'),[gcf.BinEdges(1:end-1), gcf.Values]);
-
-%VEN
-figure
-gcf=histogram(Ven); 
-title('Ven Cumulative Histogram');axis([-1100, 1000, 0, 2e7]);
-xlabel('HU');ylabel('Freq');
-saveas(gcf,strcat('../results/cumulative_histograms/figures/','Ven_hist.jpg'));
-csvwrite(strcat('../results/cumulative_histograms/CSV/','Ven_hist.csv'),[gcf.BinEdges(1:end-1), gcf.Values]);
