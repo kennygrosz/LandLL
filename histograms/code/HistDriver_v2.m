@@ -2,8 +2,8 @@ function HistDriver_v2
 close all hidden
 
 %PICK WHICH SCRIPTS TO RUN BY SETTING IT EQUAL TO 1
-Individual_Histograms=0;
-Histograms_Per_Image_Type=0;
+Individual_Histograms=1;
+Histograms_Per_Image_Type=1;
 Overlay_Per_Image_Type=1;
 
 %load structures with all patient data
