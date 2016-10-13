@@ -4,7 +4,7 @@ close all hidden
 %PICK WHICH SCRIPTS TO RUN BY SETTING IT EQUAL TO 1
 Individual_Histograms=0;
 Histograms_Per_Image_Type=0;
-Overlay_Per_Image_Type=0;
+Overlay_Per_Image_Type=1;
 Create_img_CSVs=1;
 
 %load structures with all patient data

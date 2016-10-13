@@ -43,8 +43,8 @@ for j=1:5 %for each type of picture
     saveas(gcf,strcat('../results/overlay_histograms/figures/',type{j},'_overlay_hist.jpg'));
 
     %save CSV of histogram values to be passed onto 
-    csvwrite(strcat('../results/overlay_histograms/CSV/',type{j},'_overlay_hist_freq.csv'),[freq]);
-    csvwrite(strcat('../results/overlay_histograms/CSV/',type{j},'_overlay_hist_bins.csv'),[bin]);
+    csvwrite(strcat('../results/overlay_histograms/CSV/',type{j},'_overlay_hist_freq.csv'),[freq]');
+    csvwrite(strcat('../results/overlay_histograms/CSV/',type{j},'_overlay_hist_bins.csv'),[bin]');
 
 end
    

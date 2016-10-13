@@ -30,9 +30,9 @@ for i = 1:length(FieldNames) %for each patient
     
     %save CSV of histogram values to be passed onto 
     if  j <= 4
-        csvwrite(strcat('../results/patient_histograms/CSV/',FieldNames{i},'_',type{j},'_hist.csv'),[gcf.BinEdges(1:end-1), gcf.Values]);
-    else
-        csvwrite(strcat('../results/patient_histograms/CSV/',FieldNames{i},'_',type{j},'_hist.csv'),[del_bin,del_freq-art_freq]);
+        writeCsvFile(strcat('../results/patient_histograms/CSV/',FieldNames{i},'_',type{j},'_hist.csv'),[gcf.BinEdges(1:end-1)', gcf.Values']);
+    else       
+        writeCsvFile(strcat('../results/patient_histograms/CSV/',FieldNames{i},'_',type{j},'_hist.csv'),[del_bin(1:end-1)',(del_freq-art_freq)']);
     end
 end
     

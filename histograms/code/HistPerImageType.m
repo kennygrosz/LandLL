@@ -43,7 +43,7 @@ gcf=histogram(Art);
 title('Art Cumulative Histogram');axis([-1100, 1000, 0, 2e7]);
 xlabel('HU');ylabel('Freq');
 saveas(gcf,strcat('../results/cumulative_histograms/figures/','Art_hist.jpg'));
-csvwrite(strcat('../results/cumulative_histograms/CSV/','Art_hist.csv'),[gcf.BinEdges(1:end-1), gcf.Values]);
+csvwrite(strcat('../results/cumulative_histograms/CSV/','Art_hist.csv'),[gcf.BinEdges(1:end-1)', gcf.Values']);
 
 %PRE
 figure
@@ -51,7 +51,7 @@ gcf=histogram(Pre);
 title('Pre Cumulative Histogram');axis([-1100, 1000, 0, 2e7]);
 xlabel('HU');ylabel('Freq');
 saveas(gcf,strcat('../results/cumulative_histograms/figures/','Pre_hist.jpg'));
-csvwrite(strcat('../results/cumulative_histograms/CSV/','Pre_hist.csv'),[gcf.BinEdges(1:end-1), gcf.Values]);
+csvwrite(strcat('../results/cumulative_histograms/CSV/','Pre_hist.csv'),[gcf.BinEdges(1:end-1)', gcf.Values']);
 
 %DEL
 figure
@@ -59,7 +59,7 @@ gcf=histogram(Del);
 title('Del Cumulative Histogram');axis([-1100, 1000, 0, 2e7]);
 xlabel('HU');ylabel('Freq');
 saveas(gcf,strcat('../results/cumulative_histograms/figures/','Del_hist.jpg'));
-csvwrite(strcat('../results/cumulative_histograms/CSV/','Del_hist.csv'),[gcf.BinEdges(1:end-1), gcf.Values]);
+csvwrite(strcat('../results/cumulative_histograms/CSV/','Del_hist.csv'),[gcf.BinEdges(1:end-1)', gcf.Values']);
 
 %VEN
 figure
@@ -67,15 +67,14 @@ gcf=histogram(Ven);
 title('Ven Cumulative Histogram');axis([-1100, 1000, 0, 2e7]);
 xlabel('HU');ylabel('Freq');
 saveas(gcf,strcat('../results/cumulative_histograms/figures/','Ven_hist.jpg'));
-csvwrite(strcat('../results/cumulative_histograms/CSV/','Ven_hist.csv'),[gcf.BinEdges(1:end-1), gcf.Values]);
+csvwrite(strcat('../results/cumulative_histograms/CSV/','Ven_hist.csv'),[gcf.BinEdges(1:end-1)', gcf.Values']);
 
 %DEL-ART
-%VEN
 figure
 gcf=plot(B(1:end-1),Del_Art,'LineWidth',3);
 title('Del-Art Cumulative Histogram');axis([-1100, 1000, -1e7, 1e7]);
 xlabel('HU');ylabel('Freq');
 saveas(gcf,strcat('../results/cumulative_histograms/figures/','Del-Art_hist.jpg'));
-csvwrite(strcat('../results/cumulative_histograms/CSV/','Del-Art_hist.csv'),[B,Del_Art]);
+csvwrite(strcat('../results/cumulative_histograms/CSV/','Del-Art_hist.csv'),[B(1:end-1)',Del_Art']);
 
 end
