@@ -9,7 +9,6 @@ B=linspace(-1000, 1000, 1000); %create binedges for histograms
 FN1=fieldnames(Struct1);
 FN2=fieldnames(Struct2);
 type={'Pre','Art','Ven','Del','Del-Art'};
-bin=[];
 freq=[];
 
 for j=1:5 %for each type of picture
@@ -44,7 +43,7 @@ for j=1:5 %for each type of picture
 
     %save CSV of histogram values to be passed onto 
     csvwrite(strcat('../results/overlay_histograms/CSV/',type{j},'_overlay_hist_freq.csv'),[freq]');
-    csvwrite(strcat('../results/overlay_histograms/CSV/',type{j},'_overlay_hist_bins.csv'),[bin]');
+    csvwrite(strcat('../results/overlay_histograms/CSV/',type{j},'_overlay_hist_bins.csv'),[B]');
 
 end
    
