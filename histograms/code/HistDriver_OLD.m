@@ -3,7 +3,7 @@ close all hidden
 
 %just screwing aroung with git pull
 % RID=[2,17,48,49,62,69,83,87,98,124];
-RID=[2,17,48,49,62,83,87,98,124]; %file 69 isn't working for some reason.....
+RID=[2,17,48,49,62,69,83,87,98,124]; %file 69 isn't working for some reason.....
 
 NID=[5,20,53,70,71,92,100,102,121,122];
 
