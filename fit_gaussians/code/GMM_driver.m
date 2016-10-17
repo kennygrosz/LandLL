@@ -50,7 +50,7 @@ if fit_individual_patient_histograms ==1
     RIDMatrix=[Patient,ImageType,C]; %create matrix
     
     %save matrix as CSV
-    csvwrite('../results/ResponderGMMPeaks.csv',RIDMatrix)
+    csvwrite('../results/ResponderGMMPeaks2.csv',RIDMatrix)
     
     c=1;
     for i=1:length(NR_CSV) %for each patient
@@ -82,7 +82,7 @@ if fit_individual_patient_histograms ==1
     NRIDMatrix=[Patient,ImageType,C]; %create matrix
     
     %save matrix as CSV
-    csvwrite('../results/NonResponderGMMPeaks.csv',NRIDMatrix)
+    csvwrite('../results/NonResponderGMMPeaks2.csv',NRIDMatrix)
 
 end
    

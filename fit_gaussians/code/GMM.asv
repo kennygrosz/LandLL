@@ -12,8 +12,8 @@ if length(x)~=length(y), error('x and y must be the same length'),end
 ft = fittype( 'gauss4' );
 opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
 opts.Display = 'Off';
-opts.Lower = [-Inf -Inf 0 -Inf -Inf 0 -Inf -Inf 0 -Inf 150 0];
-opts.Upper = [Inf Inf Inf Inf Inf Inf Inf Inf Inf Inf 500 Inf];
+opts.Lower = [-Inf -Inf 0 -Inf -Inf 0 -Inf -Inf 0 -Inf -Inf 0];
+opts.Upper = [Inf Inf Inf Inf Inf Inf Inf Inf Inf Inf Inf Inf];
 opts.StartPoint = [54690 51.051 14.734147844914 34585.8813436664 27.027 18.7032186222794 32534 -107.11 21.5307689533752 19972.6364121955 -7.007 27.6478045085227];
 
 % Fit model to data.
