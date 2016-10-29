@@ -1,3 +1,8 @@
+#------------------run these if it is your first time running the program------------------------
+#install.packages("rstudioapi")
+#install.packages("dplyr")
+#install.packages("oro.nifti")
+
 
 
 #--------INPUTS: FILL OUT INFO-----------------------------------------------#
@@ -18,6 +23,7 @@ FeatureList=c("Pre","Art","Ven","Del","TumorMask","TumorTruth","LiverMask","Live
 #load libraries, initialize variables, etc
 library("oro.nifti")
 library(dplyr)
+library(rstudioapi)
 
 #set path to current working path
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #set directory to current directory
