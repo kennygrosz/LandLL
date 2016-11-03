@@ -12,7 +12,6 @@ lCentZ = array(0,dim = dim(T_df)[1])
 
 #find unique patients
 Patients = unique(T_df$Patient)
-Patients
 
 # find size of livermask for each patient
 index = 1
@@ -24,7 +23,7 @@ for (p in Patients) {
   lVol[index:(index+numVoxels-1)] <- tempLV # fill in data for appropriate patient - this is the part that doesn't work
   index = index + numVoxels # update index to move onto next patient
 }
-head(lVol)
+
 
 # find centroid of livermask for each patient
 index = 1
