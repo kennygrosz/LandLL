@@ -1,7 +1,7 @@
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #set directory to current directory
 setwd("../../SuperMatrix/")
 source("MatrixBuilder2.R")
-setwd("../Features/Liver Features")
+setwd("../Features/Liver%20Features")
 
 library(dplyr)
 
@@ -10,16 +10,22 @@ lCentX = array(0,dim = dim(T_df)[1]) # initialize vectors for liver position
 lCentY = array(0,dim = dim(T_df)[1])
 lCentZ = array(0,dim = dim(T_df)[1])
 
+#find unique patients
+Patients = unique(T_df$Patients)
+
 # find size of livermask for each patient
 index = 1
 for (p in Patients) { 
   tempLV = dim(filter(T_df,Patient == p,LiverMask == 1))[1] # get number of voxels in liver
   numVoxels = dim(filter(T_df,Patient == p))[1] # total number of voxels in image
-  lVol[index:index+numVoxels] = tempLV # fill in data for appropriate patient - this is the part that doesn't work
+  index
+  index+numVoxels-1
+  lVol[index:(index+numVoxels-1)] <- tempLV # fill in data for appropriate patient - this is the part that doesn't work
   index = index + numVoxels # update index to move onto next patient
 }
-    
-# find size of livermask for each patient
+
+
+# find centroid of livermask for each patient
 index = 1
 for (p in Patients) { 
   numVoxels = dim(filter(T_df,Patient == p))[1] # get number of voxels in that patient imaage

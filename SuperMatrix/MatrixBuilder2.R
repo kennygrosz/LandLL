@@ -4,7 +4,6 @@
 #install.packages("oro.nifti")
 
 
-
 #--------INPUTS: FILL OUT INFO-----------------------------------------------#
 #INPUTS!!!!!!!!!!!!1
 
@@ -26,7 +25,7 @@ library(dplyr)
 library(rstudioapi)
 
 #set path to current working path
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #set directory to current directory
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #set directory to current directory
 
 T_df = NULL #reset whole data frame
 
@@ -96,10 +95,11 @@ else {
 }
 }
 
+rm(list=setdiff(ls(),"T_df"))
 
-#test that T_df exists and test filtering with dplyr
-head(T_df)
-dim(T_df)
-
-test=filter(T_df, Patient == 5, TumorMask == 1)
+# #test that T_df exists and test filtering with dplyr
+# head(T_df)
+# dim(T_df)
+# 
+# test=filter(T_df, Patient == 5, TumorMask == 1)
 
