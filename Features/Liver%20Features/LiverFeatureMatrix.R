@@ -18,8 +18,6 @@ index = 1
 for (p in Patients) { 
   tempLV = dim(filter(T_df,Patient == p,LiverMask == 1))[1] # get number of voxels in liver
   numVoxels = dim(filter(T_df,Patient == p))[1] # total number of voxels in image
-  index
-  index+numVoxels-1
   lVol[index:(index+numVoxels-1)] <- tempLV # fill in data for appropriate patient - this is the part that doesn't work
   index = index + numVoxels # update index to move onto next patient
 }
