@@ -28,3 +28,4 @@ for (p in Patients) {
 diffData = data.frame(centXDiff,centYDiff,centZDiff)
 T_LT = cbind(T_LT,diffData)
 colnames(T_LT)[18:24]= c("TumorVolume","TumorCentroidX","TumorCentroidY","TumorCentroidZ","CentroidDiffX","CentroidDiffY","CentroidDiffZ")
+
