@@ -1,4 +1,5 @@
 function GMM_driver
+close all hidden 
 fit_individual_patient_histograms = 1;
 
 type={'Pre','Art','Ven','Del','Del-Art'};
@@ -15,15 +16,16 @@ if fit_individual_patient_histograms ==1
         R_CSV{i}=makefilename(type,RID(i));
     end
     for i=1:length(NID)
-        NR_CSV{i}=makefilename(type,RID(i));
+        NR_CSV{i}=makefilename(type,NID(i));
     end
-    load(R_CSV{1}{1})
+    %load(R_CSV{1}{1})
     
     %for each histogram:
     c=1;
     for i=1:length(R_CSV) %for each patient
         for j = 1:length(R_CSV{i}) %for each image type
             %load vectors
+            R_CSV{i}{j};
             A=load(R_CSV{i}{j});
             
             %split csv into frequency and bins
@@ -50,7 +52,7 @@ if fit_individual_patient_histograms ==1
     RIDMatrix=[Patient,ImageType,C]; %create matrix
     
     %save matrix as CSV
-    csvwrite('../results/ResponderGMMPeaks2.csv',RIDMatrix)
+    csvwrite('../results/ResponderGMMPeaks3.csv',RIDMatrix)
     
     c=1;
     for i=1:length(NR_CSV) %for each patient
@@ -82,7 +84,7 @@ if fit_individual_patient_histograms ==1
     NRIDMatrix=[Patient,ImageType,C]; %create matrix
     
     %save matrix as CSV
-    csvwrite('../results/NonResponderGMMPeaks2.csv',NRIDMatrix)
+    csvwrite('../results/NonResponderGMMPeaks3.csv',NRIDMatrix)
 
 end
    
