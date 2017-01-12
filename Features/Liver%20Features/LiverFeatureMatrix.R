@@ -40,9 +40,3 @@ for (p in Patients) {
 
 Liver_df = data.frame(lVol,lCentX,lCentY,lCentZ) # create data frame for liver features
 colnames(Liver_df)[1:4]= c("LiverVolume","LiverCentroidX","LiverCentroidY","LiverCentroidZ")
-
-
-
-
-T_withLiver = cbind(T_df,Liver_df)
-head(T_withLiver)
