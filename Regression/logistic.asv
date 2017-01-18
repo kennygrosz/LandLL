@@ -1,0 +1,23 @@
+close all hidden
+A=xlsread('..\Features\features_mega_matrix.xlsx',1,'A3:PY22');
+
+resp = [2;1;2;1;2;2;1;2;2;1;1;2;2;1;2;1;1;1;1;2]; %RESPONDER STATUS:
+                            % 1 = RESPONDER, 2 = NON-RESPONDER
+
+TTP = A(:,7);
+A = A(:,[1:6,8:end]);
+
+[~,m] = size(A);
+
+dev = [];
+for i = 1:m
+    if A(:,i) ~= zeros(size(A(:,i)))
+        [B,dev(i,1),stats]=mnrfit(A(:,i),resp);
+        
+        %figure
+        %plot(A(:,i),resp,'.','MarkerSize',20)
+    end
+  
+end
+
+dev2 = find(dev > 0 && dev < 22.3)
