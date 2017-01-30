@@ -19,7 +19,8 @@ for i = 1:m
   
 end
 
-min_dev_ind = find(dev > 0 & dev < 22.3)
+min_dev_ind = find(dev > 0 & dev < 22.3);
+min_dev_ind = [min_dev_ind; 146];
 
 % [b,~,~]=mnrfit(A(:,min_dev_ind(3)),resp)
 % 
@@ -43,33 +44,50 @@ min_dev_ind = find(dev > 0 & dev < 22.3)
 %multivariable logistic regression
 B = A(:,min_dev_ind);
 
-%generate training and test sets
-train = randsample(20,16);
-test=[];
-for i = 1:20
-   if sum(i==train)==0
-       test = [test, i];
-   end
+
+K = 5; %number of groups for cross validation
+
+pct=[];
+for j =1:100 %run cross validation test 10 times
+    indices = crossvalind('KFold',length(resp),K); %generate indices for K-Fold cross validation
+    for k = 1:K
+        test = find(indices==k); train = find(indices~=k); %generate index vectors for train and test sets
+        
+        %------------specific to logistic regression---------------
+                % insert your own modeling code here---------
+        %generate training/testing data
+        C = B(train,:);
+        C_resp = resp(train);
+        
+        T=B(test,:);
+        T_resp = resp(test);
+        
+        %create multivariate model from training data
+        [b,dev2,stats]=mnrfit(C,C_resp);
+        
+        %generate output from new logistic model for data in test set
+        y=[];
+        for i = 1 : length(test)
+            a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4)+b(6)*T(i,5)+b(7)*T(i,6)+ b(8)*T(i,7);
+            y(i) = -1/(1+exp(-a)) + 2;
+        end
+        
+        %clean and threshold results
+        y=(y'-1);
+        thresh_y = round(y,0);
+        T_resp = T_resp-1;
+        
+        %---------------------------------------------------------
+                %include a measure of model accuracy on test set below
+        
+        %evaluate model accuracy
+        num_right = sum(T_resp == thresh_y);
+        pct= [pct, num_right/length(test)]; %store results for each trial
+    end
 end
 
-C = B(train,:);
-C_resp = resp(train);
-
-T=B(test,:);
-T_resp = resp(test);
-
-%create multivariate model from training data
-[b,dev2,stats]=mnrfit(C,C_resp);
-
-%recreate logistic model for each test pattern
-y=[];
-for i = 1 : length(test)
-    a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4)+b(6)*T(i,5)+b(7)*T(i,6);
-    y(i) = -1/(1+exp(-a)) + 2;
-end
-
-y=(y'-1)
-T_resp = T_resp-1
+disp(strcat('Prediction of TACE effectiveness is accurate ',num2str(100*mean(pct)),'% of the time'))  
+    
 
 
 
