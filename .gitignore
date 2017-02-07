@@ -4,8 +4,8 @@
 
 Raw_patient_data
 
-/Archive/Raw_patient_data
-/Archive/image_csv_files
-/Arcive/histograms/results/patient_histograms/CSV
-/Arcive/histograms/results/overlay_histograms/CSV
-/Arcive/histograms/results/cumulative_histograms/CSV
+Archive/Raw_patient_data
+Archive/image_csv_files
+Archive/histograms/results/patient_histograms/CSV
+Archive/histograms/results/overlay_histograms/CSV
+Archive/histograms/results/cumulative_histograms/CSV
