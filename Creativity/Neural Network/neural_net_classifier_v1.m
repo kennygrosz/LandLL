@@ -1,9 +1,9 @@
 function neural_net_classifier_v1
 %parameters
 close all hidden
-hid_n = 15; %number of hiden PEs in layer 2
+hid_n = 5; %number of hiden PEs in layer 2
 mu = .01; %learning rate
-n = 2000; %maximum number of learn steps
+n = 20000; %maximum number of learn steps
 K=10; %epoch size
 alpha = .75;
 tol = 0;
@@ -15,7 +15,6 @@ tol = 0;
 %scaling
 
 X_scale = X;
-
 
 
 [N,~]=size(X); %N = number of features
@@ -50,7 +49,7 @@ for i = 1:4
     out(i)=test_all_net(W1,W2,X_test(:,i))
 end
 
-round(out,1)==Y_test;
+round(out,1)==Y_test
 
 
 
