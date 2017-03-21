@@ -16,7 +16,8 @@ tol = 0;
 
 X_scale = X;
 
-
+disp('size')
+disp(X(1:10,1))
 [N,~]=size(X); %N = number of features
 m = zeros(N,1); %feature scaling parameter
 b = zeros(N,1); %feature scaling parameter
@@ -71,10 +72,10 @@ end
 
 function [X,Y]=import_data()
 
-X=xlsread('../features_mega_matrix_new.xlsx',1,'D2:QG21');
+X=xlsread('features_mega_matrix_new.xlsx',1,'D2:QG21');
 X=X'; %447 x 20 feature matrix
 
-Y=xlsread('../features_mega_matrix_new.xlsx',1,'C2:C21');
+Y=xlsread('features_mega_matrix_new.xlsx',1,'C2:C21');
 Y=Y'; %desired output (-1 = nonresponder, 1 = responder)
 end
 
@@ -176,4 +177,5 @@ if length(y)~=length(y_des), error('real and desired vectors must be same length
 e = y_des- y; %vector of individual errors
 E = sum(abs(e))/length(y);
 end
+
 
