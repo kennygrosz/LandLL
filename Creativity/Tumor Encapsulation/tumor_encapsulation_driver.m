@@ -1,6 +1,6 @@
 function tumor_encapsulation_driver
 close all hidden
-pat_num = [71]; %patient number to be tested (17,49,71,98)
+pat_num = [17]; %patient number to be tested (17,49,71,98)
                     % must make sure that the appropriate delay image file
                     % is in the patient image folder
 
@@ -31,12 +31,54 @@ T_center = get_center(T_points);
 %FIND TUMOR BOUNDARY
 T_bound = get_boundary(T_points);
 
+%GET GRADIENT TO CENTER OF THE TUMOR AT EACH BOUNDARY POINT
+T_grad = get_gradient(T_bound,T_center);
+
+%GENERATE DIFFERENT LAYERS OF INDICES AT WHICH TO CHECK BRIGHTNESSES
+T_layers = get_layers(T_bound,T_grad);
+
 
 %GET BRIGHTNESS FROM VOXELS INSIDE AND OUTSIDE THE BOUNDARY (per layer)
+T_bright = get_brightness(T_layers,Del);
+
 
 %CREATE GRAPH OF AVERAGE INTENSITY PER LAYER
 
 
+end
+
+function b = get_brightness(L,Del)
+
+n=length(L);
+B = cell(size(L));
+
+for i = 1:length(L)
+    [r,~]=size(L{i});
+    
+    for j = 1:r
+        
+    end
+end
+b=0;
+
+end
+
+function L = get_layers(bound,grad)
+offset = [-3:3];
+
+L = cell(size(offset)); %initialize cell
+for i = 1:length(offset)
+    L{i} = round(bound + offset(i)*grad);
+end
+end
+
+function grad = get_gradient(boundary, center)
+[m,~] = size(boundary);
+center_mat = repmat(center,m,1);
+diff = boundary - center_mat;
+mags = sqrt(diff(:,1).^2 + diff(:,2).^2 + diff(:,3).^2);
+mags_matrix = repmat(mags,1,3);
+grad =  diff./mags_matrix;
 end
 
 function [Del,Tum]=get_nifty_del_tumor(pat_num)
@@ -66,9 +108,15 @@ B = [x,y,z];
 end
 
 function bound = get_boundary(points)
+points(1:20,:)
+bound = boundary(points,1);
 
-bound = boundary(points);
+bound_indices = sort(unique(bound));
 
+bound = points(bound_indices,:);
+
+figure
+plot3(bound(:,1),bound(:,2),bound(:,3),'.')
 % figure
 % % plot3(points(:,1),points(:,2),points(:,3),'.')
 % hold on
