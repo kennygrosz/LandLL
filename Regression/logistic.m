@@ -3,18 +3,23 @@ close all hidden
 warning('off','MATLAB:nearlySingularMatrix')
 warning('off','stats:mnrfit:IterOrEvalLimit')
 
-A=xlsread('..\Features\features_mega_matrix.xlsx',1,'A1:PY21');
+A=xlsread('..\Features\features_mega_matrix.xlsx',1,'E2:PY21');
 
 resp = [2;1;2;1;2;2;1;2;2;1;1;2;2;1;2;1;1;1;1;2]; %RESPONDER STATUS:
-                            % 1 = RESPONDER, 2 = NON-RESPONDER
-TTP = A(:,7);
-A = A(:,[1:6,8:end]);
+             
+% 1 = RESPONDER, 2 = NON-RESPONDER
+
+
+A(1:10,1:10)
+% TTP = A(:,1);
+% A = A(:,2:end);
 
 [~,m] = size(A);
 
 dev = [];
 for i = 1:m
     if A(:,i) ~= zeros(size(A(:,i)))
+        
         [~,dev(i,1),~]=mnrfit(A(:,i),resp);
         
         %figure
@@ -26,10 +31,17 @@ end
 min_dev= find(dev > 0 & dev < 22.3);
 % min_dev_ind = [min_dev_ind; 146];
 % min_dev_ind=[149,146,210,206] %top features from linear regression email
+
+A(:,[27])
+A(:,[152])
+A(:,212)
+A(:,216)
+pause
 for z=1:6
     min_dev_ind=min_dev(min_dev~=min_dev(z)); %take all but one of the indices
     min_dev_ind = min_dev(1:2);
     min_dev_ind=min_dev([1:4])
+    min_dev_ind = [7,27,75,26]
     
     % [b,~,~]=mnrfit(A(:,min_dev_ind(3)),resp)
     %
@@ -94,7 +106,7 @@ for z=1:6
                 %             a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4)+b(6)*T(i,5)+b(7)*T(i,6); %for 6 variables
                 %                 a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4)+b(6)*T(i,5); %for 5 variables
                 
-                              a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4); %for 4 variables
+                a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4); %for 4 variables
 %                 a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3); %for 3 variables
 %                 a=b(1) + b(2)*T(i,1)+b(3)*T(i,2); %for 2 variables
 %                 a=b(1) + b(2)*T(i,1); %for 1 variables

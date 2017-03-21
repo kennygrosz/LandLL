@@ -65,7 +65,7 @@ while last_index <= N
         ylim([-1.1 1.1])
         set(gca,'XTick',[1 2 3 4 5])
         set(gca,'XTickLabel',headers(first_index:last_index))
-        
+        set(gca,'XTickLabelRotation',45)
     end
         saveas(gcf,strcat('Results/feature_graph-',num2str(fig_index),'.png'))
 
