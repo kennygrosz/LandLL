@@ -1,12 +1,18 @@
 function tumor_encapsulation_driver
+%STILL TO DO:
+    %ADD FEATURE THAT USES TUMOR CENTRE TO CUT OUT ONLY THE IMPORTANT CHUNK
+    %OF TUMOR
+    
+    
+    
 close all hidden
-pat_num = [17]; %patient number to be tested (17,49,71,98)
+pat_num = [49]; %patient number to be tested (17,49,71,98)
                     % must make sure that the appropriate delay image file
                     % is in the patient image folder
 
 
 for i = 1:length(pat_num)
-    TE(i) = TE_calc(pat_num(i))
+    TE(i) = TE_calc(pat_num(i));
 end
 
 end
@@ -17,16 +23,17 @@ TE=0;
 %GET NIFTI IMAGE FOR DELAY PHASE AND TUMOR MASK
 [Del,Tumor] = get_nifty_del_tumor(pat_num);
 
+% CLUSTER POINTS SO THAT YOU ONLY GET ONE TUMOR and no outside area
+[Tumor,T_center] = get_main_tumor(Tumor);
+T_center = T_center([2,1,3]); %permute generated centroid to make sense w data
+
 %FIND TUMOR POINTS
 T_points = find_nonzeros(Tumor);
 
-% CLUSTER POINTS SO THAT YOU ONLY GET ONE TUMOR and no outside area
-    %i.e. pick the center of the big cluster from graph, make the smallest
-    %possible box (or sphere?? Ellipsoid??) that excapsulates the biggest cluster
-
 %FIND TUMOR CENTER
-T_center = get_center(T_points);
-
+% T_center = get_center(T_points)
+% pause
+% T_center=[ 143   329    46]; %for patient 17, use for testing
 
 %FIND TUMOR BOUNDARY
 T_bound = get_boundary(T_points);
@@ -37,34 +44,88 @@ T_grad = get_gradient(T_bound,T_center);
 %GENERATE DIFFERENT LAYERS OF INDICES AT WHICH TO CHECK BRIGHTNESSES
 T_layers = get_layers(T_bound,T_grad);
 
-
 %GET BRIGHTNESS FROM VOXELS INSIDE AND OUTSIDE THE BOUNDARY (per layer)
-T_bright = get_brightness(T_layers,Del);
+T_median= med_tumor_brightness(Del,T_points);
 
-
-%CREATE GRAPH OF AVERAGE INTENSITY PER LAYER
+T_bright = get_brightness(T_layers,Del,T_median);
 
 
 end
 
-function b = get_brightness(L,Del)
 
+function b = get_brightness(L,Del,median_b)
 n=length(L);
 B = cell(size(L));
+L_mean = zeros(n,1);
+L_median = zeros(n,1);
 
-for i = 1:length(L)
+figure
+hold on
+
+for i = 1:n
     [r,~]=size(L{i});
+    B{i} = zeros(r,1);
     
     for j = 1:r
-        
+        loc = L{i}(j,:);
+        B{i}(j)= Del(loc(1),loc(2),loc(3));
+    end
+    L_mean(i) = mean(B{i});
+    L_median(i) = median(B{i});
+    
+    subplot(n,1,i)
+    hist(B{i})
+    hold on
+    title(strcat('Layer =',num2str(i-6)))
+    xlim([-400,200])
+    hold off
+    
+end
+
+L_max = find(L_median == max(L_median),1,'last');
+
+
+figure
+% plot(1:n,L_mean)
+plot(1:n,L_median)
+hold on
+
+if L_max == 1 || L_max == length(L_median)
+    error('boundary not completely captured by layers collected. Adjust layer collection accordingly')
+end
+
+bound_layers = [L_max-1, L_max, L_max+1];
+bound_med_brightness = mean(L_median(bound_layers));
+
+b = bound_med_brightness - median_b;
+
+B2 = [];
+for i = 1:length(bound_layers)
+    [r,~]=size(L{bound_layers(i)});    
+    for j = 1:r
+        loc = L{bound_layers(i)}(j,:);
+        B2 = [B2, Del(loc(1),loc(2),loc(3))];
     end
 end
-b=0;
+bound_med_brightness = median(B2);
+
+plot(1:n,median_b*ones(1,n),'--') %tumor brightness
+plot(1:n,bound_med_brightness*ones(1,n),'--') %bound brightness
+plot(bound_layers, L_median(bound_layers),'g.','MarkerSize',15)
+title({'Median brightness per layer'; strcat('Bound Brightness - Tumor Brightness =',num2str(b))}); 
+legend('Layerwise Boundary Brightness', 'Median Tumor Brightness', 'Median Boundary Brightness','Tumor Boundary Layers','Location','SouthEast')
+xlabel('Away from tumor center     ----->        Towards tumor center')
+
+
+figure
+hist(B2)
+title({'Tumor Boundary Brightness Distribution'; strcat('Median Tumor Boundary Brightness =',num2str(bound_med_brightness))})
+
 
 end
 
 function L = get_layers(bound,grad)
-offset = [-3:3];
+offset = -5:15;
 
 L = cell(size(offset)); %initialize cell
 for i = 1:length(offset)
@@ -72,10 +133,78 @@ for i = 1:length(offset)
 end
 end
 
+function [Tumor,Cent] = get_main_tumor(Tumor)
+% Given a binary 3D tumor image, return only the main connectivity tumor
+
+% T_points = find_nonzeros(Tumor);
+% figure
+% plot3(T_points(:,1),T_points(:,2),T_points(:,3),'.','MarkerSize',15)
+% title('Untrimmed Tumor')
+% hold off 
+
+
+A = bwconncomp(Tumor);
+
+%get the largest group
+
+numPixels = cellfun(@numel,A.PixelIdxList);
+[~,idx] = max(numPixels);
+n = length(numPixels);
+
+erase = [1:(idx-1), (idx+1):n];
+
+for i = 1:length(erase)
+    Tumor(A.PixelIdxList{erase(i)}) = 0; 
+end
+
+%find Centroid of new Tumor Image
+B = bwconncomp(Tumor);
+
+if length(B.PixelIdxList) ~=1,
+    error('Tumor isn''t one connected piece')
+end
+centroid = regionprops(B,'Centroid');
+
+Cent = centroid.Centroid;
+
+% T_points = find_nonzeros(Tumor);
+% figure
+% plot3(T_points(:,1),T_points(:,2),T_points(:,3),'.','MarkerSize',15)
+% title('Trimmed Tumor')
+% hold off 
+% pause
+
+end
+
+
+
+function median_b = med_tumor_brightness(Del,points)
+%return measures of central tendency for the brightness over an entire
+%tumor mask
+
+[n,~]=size(points);
+brightness = zeros(n,1);
+
+for i = 1:n
+    brightness(i) = Del(points(i,1),points(i,2),points(i,3));
+end
+
+median_b = median(brightness);
+
+figure
+hist(brightness)
+title({'Tumor Brightness Distribution';strcat('Tumor Brightness Median =',num2str(median_b))})
+xlabel('HU')
+end
+
+
+
 function grad = get_gradient(boundary, center)
+%return normalized gradient of each boundary pointing towards the center
+
 [m,~] = size(boundary);
 center_mat = repmat(center,m,1);
-diff = boundary - center_mat;
+diff = center_mat - boundary ;
 mags = sqrt(diff(:,1).^2 + diff(:,2).^2 + diff(:,3).^2);
 mags_matrix = repmat(mags,1,3);
 grad =  diff./mags_matrix;
@@ -117,8 +246,10 @@ bound = points(bound_indices,:);
 
 figure
 plot3(bound(:,1),bound(:,2),bound(:,3),'.')
+title('Generated Tumor Boundary')
+
 % figure
-% % plot3(points(:,1),points(:,2),points(:,3),'.')
+% plot3(points(:,1),points(:,2),points(:,3),'.')
 % hold on
 % trisurf(bound,points(:,1),points(:,2),points(:,3),'Facecolor','red','FaceAlpha',0.1)
 % hold off
@@ -129,9 +260,10 @@ function C = get_center(A)
 
 %optional code for visualizing indices of nonzero values extracted from
 %image
-% figure; hold on
-% gcf = plot3(A(:,1),A(:,2),A(:,3),'.')
+figure; hold on
+gcf = plot3(A(:,1),A(:,2),A(:,3),'.');
 
+figure
 %get x and y coordinates coordinates
    gcf = figure; hold on
    title({'Press the center point of biggest cluster and then click ENTER.'; ...
@@ -145,7 +277,7 @@ function C = get_center(A)
    close(gcf)
     
 %grab z-coordinate based on projection on x coordinate
-    A_z = A(find(A(:,1)==x_c),:);
+%     A_z = A(find(A(:,1)==x_c),:);
 
    gcf = figure; hold on
    title({'Press the center point and then click ENTER.'; ...
@@ -156,5 +288,17 @@ function C = get_center(A)
    
    z_c = round(z_c(end));
    
-C = [x_c,y_c,z_c]
+C = [x_c,y_c,z_c];
+
+figure; hold on
+histogram(A(:,1))
+histogram(A(:,2))
+histogram(A(:,3))
+title({'X, Y, and Z distribution of tumor voxel locations';...
+    'Unimodal Histograms indicate good tumor bounding'})
+legend('x','y','z')
+xlabel('Voxel Location')
+ylabel('Frequency')
+
+
 end
