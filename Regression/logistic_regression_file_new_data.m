@@ -43,7 +43,10 @@ for z=1:6
 %     min_dev_ind=min_dev([1:4])
 %     min_dev_ind = [7,27,75,26]
 
-    min_dev_ind = [90, 25, 83, 87]
+%     min_dev_ind = [90, 25, 83, 87]
+    min_dev_ind = [25,83,87]
+    dev(min_dev_ind)
+    title1 = {'Del_Atropos_GMM_POSTERIORS3';'viable_Pre_Atropos_GMM_POSTERIORS2';'viable_Pre_Atropos_GMM_POSTERIORS3'};
 
     % [b,~,~]=mnrfit(A(:,min_dev_ind(3)),resp)
     %
@@ -58,24 +61,26 @@ for z=1:6
     %
     % pause
     
-    % % visualize 1-dimensional variables and logistic regressions
-    % for i = 1:length(min_dev_ind)
-    %         figure
-    %
-    %         [b,~,~]=mnrfit(A(:,min_dev_ind(i)),resp);
-    %         x = linspace(min(A(:,min_dev_ind(i))),max(A(:,min_dev_ind(i))),100);
-    %         y = -1./(1+exp(-(b(1)+b(2)*x))) + 1;
-    %         fig = plot(x,y,'LineWidth',2.5); hold on
-    %         legend('probaility of not responding to treatment','Location','Best')
-    %
-    %
-    %         plot(A(:,min_dev_ind(i)),resp-1,'.','MarkerSize',20)
-    %         ylabel('Responder Status (1=Responder, 2=Non-Responder)')
-    %         xlabel('Feature Value')
-    %
-    %
-    %         saveas(fig,strcat('figures/single_var_logistic_',num2str(i),'.png'))
-    % end
+    % visualize 1-dimensional variables and logistic regressions
+    for i = 1:length(min_dev_ind)
+            figure
+    
+            [b,~,~]=mnrfit(A(:,min_dev_ind(i)),resp);
+            x = linspace(min(A(:,min_dev_ind(i))),max(A(:,min_dev_ind(i))),100);
+            y = -1./(1+exp(-(b(1)+b(2)*x))) + 1;
+            fig = plot(x,y,'LineWidth',2.5); hold on
+            legend('probaility of not responding to treatment','Location','Best')
+    
+    
+            plot(A(:,min_dev_ind(i)),resp-1,'.','MarkerSize',20)
+            ylabel('Responder Status (1=Responder, 2=Non-Responder)')
+            xlabel('Feature Value')
+%             title1{i}
+%             title(title1{i})
+    
+    
+            saveas(fig,strcat('figures/single_var_logistic_',num2str(i),'.png'))
+    end
     
     %multivariable logistic regression
     B = A(:,min_dev_ind);
@@ -108,8 +113,8 @@ for z=1:6
                 %             a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4)+b(6)*T(i,5)+b(7)*T(i,6); %for 6 variables
                 %                 a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4)+b(6)*T(i,5); %for 5 variables
                 
-                a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4); %for 4 variables
-%                 a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3); %for 3 variables
+%                 a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3)+b(5)*T(i,4); %for 4 variables
+                a=b(1) + b(2)*T(i,1)+b(3)*T(i,2)+b(4)*T(i,3); %for 3 variables
 %                 a=b(1) + b(2)*T(i,1)+b(3)*T(i,2); %for 2 variables
 %                 a=b(1) + b(2)*T(i,1); %for 1 variables
 

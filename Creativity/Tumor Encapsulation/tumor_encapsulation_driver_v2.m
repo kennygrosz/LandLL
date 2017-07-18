@@ -4,13 +4,19 @@ function tumor_encapsulation_driver_v2
     
 
 close all hidden
-pat_num = [17,49,71]; %patient number to be tested (17,49,71,98)
-                    % must make sure that the appropriate delay image file
-                    % is in the patient image folder
+pat_num = [17]; %patient number to be tested (17,49,71,98)
+%                     % must make sure that the appropriate delay image file
+%                     % is in the patient image folder
 
-TE = zeros(length(pat_num),1);
+
+% pat_num = [2,17,48,49,62,69,83,87,98,124]; %RESPONDERS
+% pat_num = [5,20,53,70,71,92,100,102,121,122]; NON-RESPONDERS
+
+TE = zeros(length(pat_num),2);
 for i = 1:length(pat_num)
-    TE(i) = TE_calc(pat_num(i));
+%     close all hidden
+    TE(i,:) = TE_calc(pat_num(i));
+%     pause
 end
 
 TE
@@ -99,7 +105,7 @@ while flag == 0;
         disp('boundary not completely captured by layers collected. collecting more layers')
         flag = 0;
         a = a-3;
-    elseif L_max == length(L_median)
+    elseif L_max > (length(L_median)-4)
         disp('boundary not completely captured by layers collected. collecting more layers')
         flag = 0;
         b = b+3;
@@ -110,7 +116,7 @@ end
 bound_layers = [L_max-1, L_max, L_max+1];
 bound_med_brightness = mean(L_median(bound_layers));
 
-b = bound_med_brightness - median_b;
+
 
 B2 = [];
 for i = 1:length(bound_layers)
@@ -122,23 +128,42 @@ for i = 1:length(bound_layers)
 end
 bound_med_brightness = median(B2);
 
+b(1) = bound_med_brightness - median_b;
 
+
+tumor_layers = L_max+2:L_max+4;
+T2 = [];
+for i = 1:length(tumor_layers)
+    [r,~]=size(L{tumor_layers(i)});    
+    for j = 1:r
+        loc = L{tumor_layers(i)}(j,:);
+        T2 = [T2, Del(loc(1),loc(2),loc(3))];
+    end
+end
+tumor_med_brightness = median(T2);
+
+
+b(2) = bound_med_brightness - tumor_med_brightness;
 
 figure
-% plot(1:n,L_mean)
-plot(1:n,L_median)
+% plot((1:n)-1+a,L_mean)
+plot((1:n)-1+a,L_median)     
 hold on
-plot(1:n,median_b*ones(1,n),'--') %tumor brightness
-plot(1:n,bound_med_brightness*ones(1,n),'--') %bound brightness
-plot(bound_layers, L_median(bound_layers),'g.','MarkerSize',15)
+plot((1:n)-1+a,median_b*ones(1,n),'--') %tumor brightness
+plot((1:n)-1+a,bound_med_brightness*ones(1,n),'--') %bound brightness
+plot(bound_layers-1+a, L_median(bound_layers),'g.','MarkerSize',15)
 title({'Median brightness per layer'; strcat('Bound Brightness - Tumor Brightness =',num2str(b))}); 
 legend('Layerwise Boundary Brightness', 'Median Tumor Brightness', 'Median Boundary Brightness','Tumor Boundary Layers','Location','SouthEast')
 xlabel('Away from tumor center     ----->        Towards tumor center')
 
-
 figure
-hist(B2)
-title({'Tumor Boundary Brightness Distribution'; strcat('Median Tumor Boundary Brightness =',num2str(bound_med_brightness))})
+histogram(T2); hold on
+histogram(B2)
+title('Tumor and Boundary Brightness Distributions')
+legend(strcat('Tumor, Median =',num2str(tumor_med_brightness)),...
+   strcat('Boundary, Median =',num2str(bound_med_brightness)) )
+xlabel('HU')
+
 
 
 end
@@ -155,11 +180,11 @@ end
 function [Tumor,Cent] = get_main_tumor(Tumor)
 % Given a binary 3D tumor image, return only the main connectivity tumor
 
-% T_points = find_nonzeros(Tumor);
-% figure
-% plot3(T_points(:,1),T_points(:,2),T_points(:,3),'.','MarkerSize',15)
-% title('Untrimmed Tumor')
-% hold off 
+T_points = find_nonzeros(Tumor);
+figure
+plot3(T_points(:,1),T_points(:,2),T_points(:,3),'.','MarkerSize',15)
+title('Untrimmed Tumor')
+hold off 
 
 
 A = bwconncomp(Tumor);
@@ -186,12 +211,13 @@ centroid = regionprops(B,'Centroid');
 
 Cent = centroid.Centroid;
 
-% T_points = find_nonzeros(Tumor);
-% figure
-% plot3(T_points(:,1),T_points(:,2),T_points(:,3),'.','MarkerSize',15)
-% title('Trimmed Tumor')
-% hold off 
-% pause
+T_points = find_nonzeros(Tumor);
+figure
+plot3(T_points(:,1),T_points(:,2),T_points(:,3),'.','MarkerSize',6)
+title('Trimmed Tumor')
+xlabel('x');ylabel('y');zlabel('z')
+hold off 
+
 
 end
 
@@ -210,10 +236,10 @@ end
 
 median_b = median(brightness);
 
-figure
-hist(brightness)
-title({'Tumor Brightness Distribution';strcat('Tumor Brightness Median =',num2str(median_b))})
-xlabel('HU')
+% figure
+% hist(brightness)
+% title({'Tumor Brightness Distribution';strcat('Tumor Brightness Median =',num2str(median_b))})
+% xlabel('HU')
 end
 
 
@@ -265,6 +291,8 @@ bound = points(bound_indices,:);
 figure
 plot3(bound(:,1),bound(:,2),bound(:,3),'.')
 title('Generated Tumor Boundary')
+xlabel('x');ylabel('y');zlabel('z')
+
 
 % figure
 % plot3(points(:,1),points(:,2),points(:,3),'.')
